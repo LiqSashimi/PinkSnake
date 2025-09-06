@@ -43,8 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('speedValue').textContent = speedValue.toFixed(1);
     
     // 按钮控制
-    const startBtn = document.getElementById('startBtn');
-    const pauseBtn = document.getElementById('pauseBtn');
+    const playPauseBtn = document.getElementById('playPauseBtn');
     const resetBtn = document.getElementById('resetBtn');
     
     // 方向按钮
@@ -53,8 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const leftBtn = document.getElementById('leftBtn');
     const rightBtn = document.getElementById('rightBtn');
     
-    startBtn.addEventListener('click', startGame);
-    pauseBtn.addEventListener('click', togglePause);
+    playPauseBtn.addEventListener('click', togglePlayPause);
     resetBtn.addEventListener('click', resetGame);
     
     // 添加方向按钮事件监听
@@ -71,40 +69,38 @@ document.addEventListener('DOMContentLoaded', () => {
     generateObstacles(initialObstacleCount);
     drawGame();
     
-    // 开始游戏
-    function startGame() {
+    // 开始/暂停游戏切换
+    function togglePlayPause() {
         if (isGameOver) {
             resetGame();
+            return;
         }
         
         if (!gameInterval) {
+            // 开始游戏
             gameInterval = setInterval(gameLoop, gameSpeed);
-            startBtn.textContent = '继续游戏';
-            isPaused = false;
-        }
-    }
-    
-    // 暂停/继续游戏
-    function togglePause() {
-        if (isGameOver) return;
-        
-        if (isPaused) {
-            gameInterval = setInterval(gameLoop, gameSpeed);
-            pauseBtn.textContent = '暂停';
+            playPauseBtn.textContent = '⏸';
             isPaused = false;
         } else {
-            clearInterval(gameInterval);
-            gameInterval = null;
-            pauseBtn.textContent = '继续';
-            isPaused = true;
-            
-            // 在画布上显示暂停文本
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'white';
-            ctx.font = '30px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('游戏已暂停', canvas.width / 2, canvas.height / 2);
+            // 暂停/继续游戏
+            if (isPaused) {
+                gameInterval = setInterval(gameLoop, gameSpeed);
+                playPauseBtn.textContent = '⏸';
+                isPaused = false;
+            } else {
+                clearInterval(gameInterval);
+                gameInterval = null;
+                playPauseBtn.textContent = '▶';
+                isPaused = true;
+                
+                // 在画布上显示暂停文本
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'white';
+                ctx.font = '30px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('游戏已暂停', canvas.width / 2, canvas.height / 2);
+            }
         }
     }
     
@@ -138,8 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         isGameOver = false;
         isPaused = false;
-        startBtn.textContent = '开始游戏';
-        pauseBtn.textContent = '暂停';
+        playPauseBtn.textContent = '▶';
         
         drawGame();
     }
